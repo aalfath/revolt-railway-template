@@ -1,0 +1,55 @@
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+:{$PORT} {
+	encode zstd gzip
+
+	route /.well-known/stoat {
+		header Access-Control-Allow-Origin *
+		header Content-Type application/json
+		respond `{"api":"{$REVOLT_PUBLIC_URL}/api"}` 200
+	}
+
+	route /api* {
+		uri strip_prefix /api
+		reverse_proxy 127.0.0.1:14702 {
+			header_down Location "^/" "/api/"
+		}
+	}
+
+	route /ws {
+		uri strip_prefix /ws
+		reverse_proxy 127.0.0.1:14703
+	}
+
+	route /autumn* {
+		uri strip_prefix /autumn
+		reverse_proxy 127.0.0.1:14704 {
+			header_down Location "^/" "/autumn/"
+		}
+	}
+
+	route /january* {
+		uri strip_prefix /january
+		reverse_proxy 127.0.0.1:14705 {
+			header_down Location "^/" "/january/"
+		}
+	}
+
+	route {
+		root * /opt/revolt/web
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# The Revolt services always export OpenTelemetry logs and traces to
+# localhost:4318. Accept and drop them so the logs aren't flooded with
+# export errors. Bound to 127.0.0.1, so it is not reachable from outside.
+http://127.0.0.1:4318 {
+	bind 127.0.0.1
+	respond 200
+}

@@ -1,0 +1,40 @@
+name: her-2297
+services:
+  mongo:
+    image: mongo:7
+    labels: [her=2297]
+    volumes: [mongo:/data/db]
+  redis:
+    image: redis:7-alpine
+    labels: [her=2297]
+  rabbit:
+    build: ./rabbitmq
+    labels: [her=2297]
+    environment:
+      RABBITMQ_DEFAULT_USER: revolt
+      RABBITMQ_DEFAULT_PASS: local-test-only-rabbit
+  s3:
+    image: chrislusf/seaweedfs
+    labels: [her=2297]
+    command: server -dir=/data -s3 -s3.port=9000
+    volumes: [s3:/data]
+  revolt:
+    build: ./revolt
+    labels: [her=2297]
+    ports: ["42297:8080"]
+    environment:
+      REVOLT_PUBLIC_URL: http://localhost:42297
+      MONGODB_URL: mongodb://mongo:27017
+      REDIS_URL: redis://redis:6379/
+      RABBITMQ_HOST: rabbit
+      RABBITMQ_USER: revolt
+      RABBITMQ_PASSWORD: local-test-only-rabbit
+      S3_ENDPOINT: http://s3:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: revolt-uploads
+      S3_ACCESS_KEY_ID: test
+      S3_SECRET_ACCESS_KEY: testsecret
+      REVOLT_SECRET: local-test-only-change-me-0123456789abcdef
+volumes: {mongo: {}, s3: {}}
+# Local test only. Create the bucket once after `up`:
+#   docker run --rm --network her-2297_default curlimages/curl -X PUT http://s3:9000/revolt-uploads
