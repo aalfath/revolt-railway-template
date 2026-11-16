@@ -1,3 +1,5 @@
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/revolt?utm_medium=integration&utm_source=button&utm_campaign=revolt)
+
 # Revolt on Railway
 
 A Railway template for [Revolt](https://github.com/revoltchat/self-hosted) (now developed as **Stoat**, [stoatchat](https://github.com/stoatchat)), the open-source chat platform with servers, text channels, direct messages, groups, roles, file sharing and bots, in a web app much like Discord.
