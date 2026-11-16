@@ -16,6 +16,8 @@
 	route /api* {
 		uri strip_prefix /api
 		reverse_proxy 127.0.0.1:14702 {
+			# Railway's edge puts the client address in X-Real-IP; Revolt rate-limits by X-Forwarded-For.
+			header_up X-Forwarded-For {http.request.header.X-Real-IP}
 			header_down Location "^/" "/api/"
 		}
 	}
@@ -28,6 +30,8 @@
 	route /autumn* {
 		uri strip_prefix /autumn
 		reverse_proxy 127.0.0.1:14704 {
+			# Railway's edge puts the client address in X-Real-IP; Revolt rate-limits by X-Forwarded-For.
+			header_up X-Forwarded-For {http.request.header.X-Real-IP}
 			header_down Location "^/" "/autumn/"
 		}
 	}
@@ -35,6 +39,8 @@
 	route /january* {
 		uri strip_prefix /january
 		reverse_proxy 127.0.0.1:14705 {
+			# Railway's edge puts the client address in X-Real-IP; Revolt rate-limits by X-Forwarded-For.
+			header_up X-Forwarded-For {http.request.header.X-Real-IP}
 			header_down Location "^/" "/january/"
 		}
 	}
